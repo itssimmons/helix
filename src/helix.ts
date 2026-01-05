@@ -1,0 +1,176 @@
+import Request from './class/request';
+import Response from './class/response';
+import type { MiddlewareType } from './types/middleware';
+import type { RouteSimple, RouteType } from './types/route.type';
+import { Main } from './middlewares/main.middleware';
+
+function matchRoute(
+	pattern: string,
+	pathname: string
+): Record<string, string> | null {
+	const paramNames: string[] = [];
+
+	// Convertir :nombre en grupos de captura regex
+	const regexPattern = pattern.replace(/:([^/]+)/g, (_, paramName) => {
+		paramNames.push(paramName);
+		return '([^/]+)';
+	});
+
+	const regex = new RegExp(`^${regexPattern}$`);
+	const match = pathname.match(regex);
+
+	if (!match) return null;
+
+	// Construir objeto con los parámetros extraídos
+	const params: Record<string, string> = {};
+	paramNames.forEach((name, index) => {
+		params[name] = match[index + 1] ?? '';
+	});
+
+	return params;
+}
+
+export class Helix {
+	private middlewares: MiddlewareType[] = [];
+	private tempRoutes: RouteType[] = [];
+
+	async run(port: number = 3000, host: string = '0.0.0.0'): Promise<void> {
+		this.load();
+		console.log(`Server running at http://${host}:${port}`);
+		const { serve } = await import('bun');
+		serve({
+			port,
+			hostname: host,
+			fetch: async (req) => {
+				const url = new URL(req.url);
+				const method = req.method.toLowerCase();
+				const result = this.tempRoutes
+					.map((x) => ({
+						route: x,
+						params:
+							x.method === method ? matchRoute(x.route, url.pathname) : null,
+					}))
+					.find((x) => x.params !== null);
+
+				if (!result)
+					return Response.create(404).setBody('Not found').toResponse();
+
+				const { route, params } = result;
+				const response = Response.create();
+				const request = await Request.create(req, params!);
+
+				const instances = [
+					...Array.from(route.requiredMiddlewares).map(
+						(middleware) => new middleware()
+					),
+					Main.create(route.handler),
+				];
+				instances.forEach((instance) => {
+					instance.prepare(instances);
+				});
+				await Promise.all(
+					instances.map((instance) => {
+						const middleware = route.middlewares?.find(
+							(x) => x.class.name === instance.constructor.name
+						);
+						if (!middleware || !middleware.args) {
+							return instance.run(request, response);
+						}
+						return instance.run(request, response, middleware.args);
+					})
+				);
+
+				return response.toResponse();
+			},
+		});
+	}
+
+	registerMiddlewares(middlewares: MiddlewareType[]): void {
+		this.middlewares.push(...middlewares);
+	}
+
+	registerMiddleware(middleware: MiddlewareType): void {
+		this.middlewares.push(middleware);
+	}
+
+	get(routeData: RouteSimple): void {
+		this.newRoute({
+			route: routeData.route,
+			handler: routeData.handler,
+			middlewares: routeData.middlewares,
+			method: 'get',
+			requiredMiddlewares: new Set(),
+		});
+	}
+
+	post(routeData: RouteSimple): void {
+		this.newRoute({
+			...routeData,
+			method: 'post',
+			requiredMiddlewares: new Set(),
+		});
+	}
+
+	put(routeData: RouteSimple): void {
+		this.newRoute({
+			...routeData,
+			method: 'put',
+			requiredMiddlewares: new Set(),
+		});
+	}
+
+	delete(routeData: RouteSimple): void {
+		this.newRoute({
+			...routeData,
+			method: 'delete',
+			requiredMiddlewares: new Set(),
+		});
+	}
+
+	patch(routeData: RouteSimple): void {
+		this.newRoute({
+			...routeData,
+			method: 'patch',
+			requiredMiddlewares: new Set(),
+		});
+	}
+
+	newRoute(routeData: RouteType): void {
+		routeData.middlewares?.forEach((middleware) => {
+			if (!middleware.class) return;
+			if (this.middlewares.includes(middleware.class)) return;
+			this.registerMiddleware(middleware.class);
+		});
+		this.tempRoutes.push(routeData);
+	}
+
+	load(): void {
+		this.tempRoutes.forEach((route) => {
+			const { middlewares } = route;
+			const loadChilds = (middlewares: MiddlewareType[]) => {
+				middlewares.forEach((middleware: MiddlewareType) => {
+					if (route.requiredMiddlewares.has(middleware)) return;
+					route.requiredMiddlewares.add(middleware);
+					loadChilds(middleware.depends);
+					loadChilds(middleware.before);
+				});
+			};
+
+			this.middlewares
+				.filter((m) => m.isGlobal)
+				.forEach((m) => {
+					route.requiredMiddlewares.add(m);
+				});
+
+			middlewares?.forEach((middleware) => {
+				if (!middleware.class) return;
+				route.requiredMiddlewares.add(middleware.class);
+				loadChilds(middleware.class.depends);
+				loadChilds(middleware.class.before);
+			});
+		});
+	}
+}
+
+const helix: Helix = new Helix();
+export default helix;
