@@ -1,3 +1,5 @@
+import { HTTP_STATUS_TEXT } from '../lib/literals/status';
+
 type JsonValue =
 	| string
 	| number
@@ -7,26 +9,6 @@ type JsonValue =
 	| { [key: string]: JsonValue };
 
 type ResponseBody = BodyInit | null;
-
-const HTTP_STATUS_TEXT: Record<number, string> = {
-	200: 'OK',
-	201: 'Created',
-	204: 'No Content',
-	301: 'Moved Permanently',
-	302: 'Found',
-	304: 'Not Modified',
-	400: 'Bad Request',
-	401: 'Unauthorized',
-	403: 'Forbidden',
-	404: 'Not Found',
-	405: 'Method Not Allowed',
-	409: 'Conflict',
-	422: 'Unprocessable Entity',
-	429: 'Too Many Requests',
-	500: 'Internal Server Error',
-	502: 'Bad Gateway',
-	503: 'Service Unavailable',
-};
 
 class HelixResponse {
 	#headers: Headers;
@@ -38,7 +20,7 @@ class HelixResponse {
 		body: ResponseBody = null,
 		status: number = 200,
 		headers: Headers = new Headers(),
-		statusText?: string
+		statusText?: string,
 	) {
 		this.#body = body;
 		this.#status = status;
@@ -54,7 +36,7 @@ class HelixResponse {
 
 	static json<T extends JsonValue>(
 		data: T,
-		status: number = 200
+		status: number = 200,
 	): HelixResponse {
 		const headers = new Headers({ 'content-type': 'application/json' });
 		return new HelixResponse(JSON.stringify(data), status, headers);
@@ -80,13 +62,13 @@ class HelixResponse {
 	}
 
 	static fromResponse(
-		response: ResponseInit & { body?: ResponseBody }
+		response: ResponseInit & { body?: ResponseBody },
 	): HelixResponse {
 		return new HelixResponse(
 			response.body ?? null,
 			response.status ?? 200,
 			new Headers(response.headers),
-			response.statusText
+			response.statusText,
 		);
 	}
 
