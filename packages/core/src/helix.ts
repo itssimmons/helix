@@ -1,12 +1,12 @@
 import Request from './class/request';
 import Response from './class/response';
 import type { MiddlewareType } from './types/middleware';
-import type { RouteSimple, RouteType } from './types/route.type';
+import type { RouteSimple, RouteType } from './types/route';
 import { Main } from './middlewares/main.middleware';
 
 function matchRoute(
 	pattern: string,
-	pathname: string
+	pathname: string,
 ): Record<string, string> | null {
 	const paramNames: string[] = [];
 
@@ -61,7 +61,7 @@ export class Helix {
 
 				const instances = [
 					...Array.from(route.requiredMiddlewares).map(
-						(middleware) => new middleware()
+						(middleware) => new middleware(),
 					),
 					Main.create(route.handler),
 				];
@@ -71,13 +71,13 @@ export class Helix {
 				await Promise.all(
 					instances.map((instance) => {
 						const middleware = route.middlewares?.find(
-							(x) => x.class.name === instance.constructor.name
+							(x) => x.class.name === instance.constructor.name,
 						);
 						if (!middleware || !middleware.args) {
 							return instance.run(request, response);
 						}
 						return instance.run(request, response, middleware.args);
-					})
+					}),
 				);
 
 				return response.toResponse();
@@ -172,5 +172,4 @@ export class Helix {
 	}
 }
 
-const helix: Helix = new Helix();
-export default helix;
+export default new Helix() as Helix;
