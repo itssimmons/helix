@@ -1,4 +1,11 @@
+# Node.js
 node_modules/
 dist/
 
+# MacoS
 **/*.DS_Store
+
+# Temporary files
+*.log
+.turbo/
+.cache/

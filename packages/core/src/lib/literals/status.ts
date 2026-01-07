@@ -66,10 +66,10 @@ export const RawHttpStatus = [
 	[508, 'Loop Detected'],
 	[510, 'Not Extended'],
 	[511, 'Network Authentication Required'],
-] as const;
+] as const
 
 export const HTTP_STATUS_TEXT: { [status: number]: string } =
-	Object.fromEntries(RawHttpStatus);
+	Object.fromEntries(RawHttpStatus)
 
 export enum HTTP_STATUS {
 	// 1xx Informational

@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "name": "@helix-server/tcp",
+  "scripts": {
+    "build": "echo \"Building tcp package...\"",
+    "publish": "echo \"Publishing tcp package...\"",
+    "test": "echo \"Running tests for tcp package...\""
+  }
+}

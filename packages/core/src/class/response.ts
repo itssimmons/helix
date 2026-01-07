@@ -1,4 +1,4 @@
-import { HTTP_STATUS_TEXT } from '../lib/literals/status';
+import { HTTP_STATUS_TEXT } from '../lib/literals/status'
 
 type JsonValue =
 	| string
@@ -6,15 +6,15 @@ type JsonValue =
 	| boolean
 	| null
 	| JsonValue[]
-	| { [key: string]: JsonValue };
+	| { [key: string]: JsonValue }
 
-type ResponseBody = BodyInit | null;
+type ResponseBody = Bun.BodyInit | null
 
 class HelixResponse {
-	#headers: Headers;
-	#body: ResponseBody;
-	#status: number;
-	#statusText?: string;
+	#headers: Headers
+	#body: ResponseBody
+	#status: number
+	#statusText?: string
 
 	private constructor(
 		body: ResponseBody = null,
@@ -22,43 +22,43 @@ class HelixResponse {
 		headers: Headers = new Headers(),
 		statusText?: string,
 	) {
-		this.#body = body;
-		this.#status = status;
-		this.#headers = headers;
-		this.#statusText = statusText;
+		this.#body = body
+		this.#status = status
+		this.#headers = headers
+		this.#statusText = statusText
 	}
 
 	// ─── Factory Methods ───────────────────────────────────────────────
 
 	static create(status: number = 200): HelixResponse {
-		return new HelixResponse(null, status);
+		return new HelixResponse(null, status)
 	}
 
 	static json<T extends JsonValue>(
 		data: T,
 		status: number = 200,
 	): HelixResponse {
-		const headers = new Headers({ 'content-type': 'application/json' });
-		return new HelixResponse(JSON.stringify(data), status, headers);
+		const headers = new Headers({ 'content-type': 'application/json' })
+		return new HelixResponse(JSON.stringify(data), status, headers)
 	}
 
 	static text(data: string, status: number = 200): HelixResponse {
-		const headers = new Headers({ 'content-type': 'text/plain' });
-		return new HelixResponse(data, status, headers);
+		const headers = new Headers({ 'content-type': 'text/plain' })
+		return new HelixResponse(data, status, headers)
 	}
 
 	static html(data: string, status: number = 200): HelixResponse {
-		const headers = new Headers({ 'content-type': 'text/html' });
-		return new HelixResponse(data, status, headers);
+		const headers = new Headers({ 'content-type': 'text/html' })
+		return new HelixResponse(data, status, headers)
 	}
 
 	static redirect(url: string, status: number = 302): HelixResponse {
-		const headers = new Headers({ location: url });
-		return new HelixResponse(null, status, headers);
+		const headers = new Headers({ location: url })
+		return new HelixResponse(null, status, headers)
 	}
 
 	static noContent(): HelixResponse {
-		return new HelixResponse(null, 204);
+		return new HelixResponse(null, 204)
 	}
 
 	static fromResponse(
@@ -67,63 +67,63 @@ class HelixResponse {
 		return new HelixResponse(
 			response.body ?? null,
 			response.status ?? 200,
-			new Headers(response.headers),
+			new Headers(response.headers as Bun.HeadersInit),
 			response.statusText,
-		);
+		)
 	}
 
 	// ─── Builder Methods ───────────────────────────────────────────────
 
 	setHeader(key: string, value: string): this {
-		this.#headers.set(key, value);
-		return this;
+		this.#headers.set(key, value)
+		return this
 	}
 
 	appendHeader(key: string, value: string): this {
-		this.#headers.append(key, value);
-		return this;
+		this.#headers.append(key, value)
+		return this
 	}
 
 	removeHeader(key: string): this {
-		this.#headers.delete(key);
-		return this;
+		this.#headers.delete(key)
+		return this
 	}
 
 	setStatus(status: number, statusText?: string): this {
-		this.#status = status;
-		this.#statusText = statusText;
-		return this;
+		this.#status = status
+		this.#statusText = statusText
+		return this
 	}
 
 	setBody(body: ResponseBody): this {
-		this.#body = body;
-		return this;
+		this.#body = body
+		return this
 	}
 
 	setJsonBody<T extends JsonValue>(data: T): this {
-		this.#body = JSON.stringify(data);
+		this.#body = JSON.stringify(data)
 		if (!this.#headers.has('content-type')) {
-			this.#headers.set('content-type', 'application/json');
+			this.#headers.set('content-type', 'application/json')
 		}
-		return this;
+		return this
 	}
 
 	// ─── Getters ───────────────────────────────────────────────────────
 
 	get status(): number {
-		return this.#status;
+		return this.#status
 	}
 
 	get statusText(): string {
-		return this.#statusText ?? HTTP_STATUS_TEXT[this.#status] ?? 'Unknown';
+		return this.#statusText ?? HTTP_STATUS_TEXT[this.#status] ?? 'Unknown'
 	}
 
 	get headers(): Headers {
-		return this.#headers;
+		return this.#headers
 	}
 
 	get body(): ResponseBody {
-		return this.#body;
+		return this.#body
 	}
 
 	// ─── Export ────────────────────────────────────────────────────────
@@ -133,8 +133,8 @@ class HelixResponse {
 			status: this.#status,
 			statusText: this.statusText,
 			headers: this.#headers,
-		});
+		})
 	}
 }
 
-export default HelixResponse;
+export default HelixResponse

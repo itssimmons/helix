@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 	devtools: { enabled: true },
+	sourcemap: false,
 	modules: ['@nuxtjs/i18n'],
 	extends: ['shadcn-docs-nuxt'],
 	i18n: {
@@ -22,4 +23,10 @@ export default defineNuxtConfig({
 		respectPathCase: true,
 	},
  	compatibilityDate: '2024-07-06',
+  nitro: {
+    prerender: {
+			failOnError: false,
+      concurrency: 1
+    }
+  }
 });

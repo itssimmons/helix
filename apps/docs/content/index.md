@@ -23,11 +23,11 @@ To get started with Helix Server, check out our [Getting Started Guide](/getting
 
 ## Documentation
 
-For detailed documentation, visit our [Docs](/docs).
+For detailed documentation, visit our [Docs](/#).
 
 ## Free to Contribute
 
-We welcome contributions from the community! Check out our [Contributing Guide](/contributing) to get involved.
+We welcome contributions from the community! Check out our [Contributing Guide](/#) to get involved.
 
 ## Why Helix Server?
 Beautifully designed Nuxt Content template built with shadcn-vue. :br Customizable. Compatible. Open Source.

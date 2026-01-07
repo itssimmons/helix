@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "name": "@helix-server/utils",
+  "scripts": {
+    "build": "echo \"Building utils package...\"",
+    "publish": "echo \"Publishing utils package...\"",
+    "test": "echo \"Running tests for utils package...\""
+  }
+}
