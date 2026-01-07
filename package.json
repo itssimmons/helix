@@ -1,10 +1,38 @@
 {
 	"name": "@helix-server/core",
 	"version": "0.1.0",
-	"description": "Highly extensible TCP server framework for building scalable and maintainable network applications.",
-	"homepage": "https://github.com/helix-tcp/helix#readme",
+	"description": "Highly extensible and performant server framework for building web applications and APIs.",
+	"author": "LeandroEPK <leandro.kondratzky@gmail.com>",
+	"contributors": [
+		{
+			"email": "simonvillafanee@gmail.com",
+			"name": "Simón Villafañe",
+			"url": "https://github.com/itssimmons"
+		}
+	],
+	"keywords": [
+		"helix",
+		"helix-server",
+		"server",
+		"framework",
+		"web",
+		"api",
+		"bun",
+		"nodejs",
+		"typescript",
+		"extensible",
+		"performance",
+		"lightweight",
+		"http",
+		"https",
+		"tcp",
+		"middleware",
+		"routing",
+		"plugins"
+	],
+	"homepage": "https://github.com/helix-server/core#readme",
 	"bugs": {
-		"url": "https://github.com/helix-tcp/helix/issues"
+		"url": "https://github.com/helix-server/core/issues"
 	},
 	"license": "MIT",
 	"private": true,
@@ -13,10 +41,13 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/helix-tcp/helix.git"
+		"url": "git+https://github.com/helix-server/core.git"
 	},
 	"scripts": {
 		"build": "bun run --filter '*' build",
 		"test": "bun run --filter '*' test"
+	},
+	"simple-git-hooks": {
+		"pre-commit": "..."
 	}
 }
