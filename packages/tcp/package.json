@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "build": "echo \"Building tcp package...\"",
+    "publish": "echo \"Publishing tcp package...\""
+  }
+}

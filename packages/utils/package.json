@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "build": "echo \"Building utils package...\"",
+    "publish": "echo \"Publishing utils package...\""
+  }
+}

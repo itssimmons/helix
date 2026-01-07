@@ -5,8 +5,7 @@ on:
     tags:
       - 'v*'
     paths:
-      - 'packages/core/**'
-      - 'packages/utils/**'
+      - 'packages/docs/**'
 
 permissions:
   contents: write
@@ -34,7 +33,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build
-        run: bun run build
+        run: bun run --filter docs build
 
       - name: Generate changelog
         run: bunx changelogithub
@@ -42,8 +41,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish to npm
-        run: bun publish --access public
-        env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
+      - name: Upload docs
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/helix-server/docs.github.io.git
+          git checkout -b main
+          git add -f packages/docs/dist
+          git commit -m "Deploy docs for ${{ github.ref }} [skip ci]" || echo "No changes to commit"
+          git push origin main --force

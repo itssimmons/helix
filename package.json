@@ -1,53 +1,81 @@
 {
-	"name": "@helix-server/core",
-	"version": "0.1.0",
-	"description": "Highly extensible and performant server framework for building web applications and APIs.",
-	"author": "LeandroEPK <leandro.kondratzky@gmail.com>",
-	"contributors": [
-		{
-			"email": "simonvillafanee@gmail.com",
-			"name": "Simón Villafañe",
-			"url": "https://github.com/itssimmons"
-		}
-	],
-	"keywords": [
-		"helix",
-		"helix-server",
-		"server",
-		"framework",
-		"web",
-		"api",
-		"bun",
-		"nodejs",
-		"typescript",
-		"extensible",
-		"performance",
-		"lightweight",
-		"http",
-		"https",
-		"tcp",
-		"middleware",
-		"routing",
-		"plugins"
-	],
-	"homepage": "https://github.com/helix-server/core#readme",
-	"bugs": {
-		"url": "https://github.com/helix-server/core/issues"
-	},
-	"license": "MIT",
-	"private": true,
-	"workspaces": [
-		"packages/*"
-	],
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/helix-server/core.git"
-	},
-	"scripts": {
-		"build": "bun run --filter '*' build",
-		"test": "bun run --filter '*' test"
-	},
-	"simple-git-hooks": {
-		"pre-commit": "..."
-	}
+  "name": "@helix-server/core",
+  "version": "0.1.0",
+  "description": "Highly extensible and performant server framework for building web applications and APIs.",
+  "author": "LeandroEPK <leandro.kondratzky@gmail.com>",
+  "contributors": [
+    {
+      "email": "simonvillafanee@gmail.com",
+      "name": "Simón Villafañe",
+      "url": "https://github.com/itssimmons"
+    }
+  ],
+  "keywords": [
+    "helix",
+    "helix-server",
+    "server",
+    "framework",
+    "web",
+    "api",
+    "bun",
+    "nodejs",
+    "typescript",
+    "extensible",
+    "performance",
+    "lightweight",
+    "http",
+    "https",
+    "tcp",
+    "middleware",
+    "routing",
+    "plugins"
+  ],
+  "homepage": "https://github.com/helix-server/core#readme",
+  "bugs": {
+    "url": "https://github.com/helix-server/core/issues"
+  },
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helix-server/core.git"
+  },
+  "engines": {
+    "node": ">=20.0.0 <=24.0.0",
+    "bun": ">=1.0.0"
+  },
+  "scripts": {
+    "prepare": "simple-git-hooks",
+    "build": "bun run --filter \"*\" build",
+    "lint": "bun run --filter \"*\" lint",
+    "type-check": "bun run --filter \"*\" type-check",
+    "test": "bun run --filter \"*\" test",
+    "publish": "bun run --filter \"*\" publish"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "bun run lint-staged"
+  },
+  "lint-staged": {
+    "**/*.{js,ts,jsx,tsx}": [
+      "prettier --write",
+      "sh -c 'bun run type-check'",
+      "bun test --run"
+    ],
+    "**/*.{json,md,css,scss}": [
+      "prettier --write"
+    ],
+    "**/*.{ts,js}": [
+      "bun lint --fix"
+    ]
+  },
+  "devDependencies": {
+    "prettier": "3.7.4",
+    "simple-git-hooks": "^2.13.1"
+  },
+  "dependencies": {
+    "lint-staged": "^16.2.7"
+  }
 }

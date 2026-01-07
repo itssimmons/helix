@@ -1,1 +1,1 @@
-import './lib/prototypes/Array.get';
+import './lib/prototypes/Array.get'
